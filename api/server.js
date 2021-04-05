@@ -46,16 +46,38 @@ server.post('/api/users', (req, res) => {
   }
 })
 
-// server.put('/api/users:id', (req, res) => {
-  
-// })
+server.put('/api/users/:id', (req, res) => {
+  const {id} = req.params
+  const updatedUser = req.body
+  if (!updatedUser.name || !updatedUser.bio) {
+    res.status(422).json("Name and Bio required")
+  } else {
+    console.log(id, updatedUser)
+    Users.update(id, updatedUser)
+      .then(res => {
+        console.log(res)
+        res.status(200).json(updatedUser)
+      })
+      .catch(err => {
+        res.status(400).json({message: err.message})
+    })
+  }
+})
 
-// server.delete('/api/users/:id', (req, res) => {
-  
-// })
+server.delete('/api/users/:id', (req, res) => {
+  const { id } = req.params;
+  Users.remove(id)
+    .then(res => {
+      console.log(res)
+      res.status(200).json(res)
+    })
+    .catch(err => {
+    res.status(400).json({message: err.message})
+  })
+})
 
 server.use("*", (req, res) => {
-  res.status(404).json({message: "Let's get this party rockin"})
+  res.status(404).json({message: "That aint it, Chief."})
 })
 
 module.exports = server; // EXPORT YOUR SERVER instead of {}
